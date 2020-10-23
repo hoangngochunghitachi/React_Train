@@ -11,9 +11,9 @@ function ExchangeMoney(props) {
 
     function handleChange(data) {
         setUnitMoney({
-            ...unitMoney,
+            // ...unitMoney,
             data,
-        })
+        });
         console.log("update state", unitMoney)
     }
 

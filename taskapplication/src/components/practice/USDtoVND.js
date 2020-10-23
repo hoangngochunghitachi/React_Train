@@ -18,14 +18,14 @@ function USDtoVND(props) {
             usd,
             vnd,
         };
-        props.onHanldeChange(unitMoney)
-        console.log('change', unitMoney)
+        props.onHanldeChange(unitMoney);
+        console.log('change', unitMoney);
     }
 
     return (
         <div>
             <span>USD </span>
-            <input onChange={e => exchangeMoneyToVND(e)} />
+            <input onChange={e => exchangeMoneyToVND(e)} value={props.value}/>
         </div>
     );
 }
