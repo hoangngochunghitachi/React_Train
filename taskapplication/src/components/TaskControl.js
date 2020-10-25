@@ -9,9 +9,9 @@ export default class TaskControl extends Component {
         return (
             <div className="row mt-15">
                 {/* Task Search */}
-                <TaskSearchControl />
+                <TaskSearchControl onSearch={this.props.onSearch} />
                 {/* Task Sort */}
-                <TaskSortControl />
+                <TaskSortControl onSort={this.props.onSort} sortBy={this.props.sortBy} sortValue={this.props.sortValue} />
             </div>
         );
     }

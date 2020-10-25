@@ -22,6 +22,22 @@ export default class TaskForm extends Component {
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps && nextProps.task) {
+            this.setState({
+                id: nextProps.task.id,
+                name: nextProps.task.name,
+                status: nextProps.task.status
+            });
+        } else if (!nextProps.task) {
+            this.setState({
+                id: '',
+                name: '',
+                status: false
+            });
+        }
+    }
+
     onExitForm = () => {
         this.props.onCloseForm();
     }
@@ -58,7 +74,7 @@ export default class TaskForm extends Component {
             <div className="panel panel-warning">
                 <div className="panel-heading">
                     <h3 className="panel-title">
-                        {id !== '' ? 'Add Job' : 'Update Job'}
+                        {id === '' ? 'Add Job' : 'Update Job'}
                     </h3>
                     <span
                         className="fa fa-times-circle text-right"
@@ -78,7 +94,7 @@ export default class TaskForm extends Component {
                         </select>
                         <br />
                         <div className="text-center">
-                            <button type="submit" className="btn btn-warning">Add</button>&nbsp;
+                            <button type="submit" className="btn btn-warning">Save</button>&nbsp;
                             <button type="button" className="btn btn-danger" onClick={this.onClear}>Cancel</button>
                         </div>
                     </form>
