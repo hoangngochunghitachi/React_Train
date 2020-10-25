@@ -9,33 +9,25 @@ export default class TaskSearchControl extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      tasks: []
+      tasks: [],
+      isDisplayForm: false,
+      taskEditing: null
     }
   }
 
-  onGenerateData = () => {
-    const tasks = [
-      {
-        id: this.generateID(),
-        name: "Java",
-        status: true
-      },
-      {
-        id: this.generateID(),
-        name: "DotNet",
-        status: true
-      },
-      {
-        id: this.generateID(),
-        name: "Golang",
-        status: false
-      }
-    ];
+  componentWillMount() {
+    if (localStorage && localStorage.getItem('tasks')) {
+      const tasks = JSON.parse(localStorage.getItem('tasks'));
+      this.setState({
+        tasks: tasks
+      });
+    }
+  }
+
+  onToggleForm = () => {
     this.setState({
-      tasks: tasks
-    })
-    localStorage.setItem('tasks', JSON.stringify(tasks))
-    // console.log(this.state)
+      isDisplayForm: !this.state.isDisplayForm
+    });
   }
 
   s4() {
@@ -45,7 +37,75 @@ export default class TaskSearchControl extends Component {
     return this.s4() + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' + this.s4();
   }
 
+  onCloseForm = () => {
+    this.setState({
+      isDisplayForm: false
+    });
+  }
+  onSubmit = (data) => {
+    const { tasks } = this.state;
+    data.id = this.generateID();
+    tasks.push(data);
+    this.setState({
+      tasks: tasks
+    });
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }
+
+  onUpdateStatus = (id) => {
+    const { tasks } = this.state;
+    let index = this.findIndex(id);
+    if (index !== -1) {
+      tasks[index].status = !tasks[index].status;
+      this.setState({
+        tasks: tasks
+      });
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+  }
+
+  findIndex = (id) => {
+    const { tasks } = this.state;
+    let result = -1;
+    tasks.forEach((task, index) => {
+      if (task.id === id) {
+        result = index;
+      }
+    });
+    return result;
+  }
+
+  onDelete = (id) => {
+    const { tasks } = this.state;
+    let index = this.findIndex(id);
+    if (index !== -1) {
+      tasks.splice(index, 1);
+      this.setState({
+        tasks: tasks
+      });
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+  }
+
+  onShowForm = () => {
+    this.setState({
+      isDisplayForm: true
+    });
+  }
+
+  onUpdate = (id) => {
+    const { tasks } = this.state;
+    let index = this.findIndex(id);
+    const taskEditing = tasks[index];
+    this.setState({
+      taskEditing: taskEditing
+    });
+    this.onShowForm();
+  }
+
   render() {
+    const { tasks, isDisplayForm, taskEditing } = this.state;
+    const elmTaskForm = isDisplayForm ? <TaskForm onSubmit={this.onSubmit} onCloseForm={this.onCloseForm} task={taskEditing} /> : '';
     return (
       <div className="container">
         <div className="text-center">
@@ -53,21 +113,19 @@ export default class TaskSearchControl extends Component {
           <hr />
         </div>
         <div className="row">
-          <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+          <div className={isDisplayForm ? 'col-xs-4 col-sm-4 col-md-4 col-lg-4' : ''}>
             {/* Task Form */}
-            <TaskForm />
+            {/* <TaskForm /> */}
+            {elmTaskForm}
           </div>
-          <div className="col-xs-8 col-sm-8 col-md-8 col-lg-8">
-            <button type="button" className="btn btn-primary">
+          <div className={isDisplayForm ? 'col-xs-8 col-sm-8 col-md-8 col-lg-8' : 'col-xs-12 col-sm-12 col-md-12 col-lg-12'}>
+            <button type="button" className="btn btn-primary" onClick={this.onToggleForm}>
               <span className="fa fa-plus mr-5"></span>Add New Job
-                  </button>
-            <button type="button" className="btn btn-danger ml-5" onClick={this.onGenerateData}>
-              <span className="fa fa-plus mr-5"></span>generate data
                   </button>
             {/* Task Control  */}
             <TaskControl />
             {/* Task List  */}
-            <TaskList />
+            <TaskList tasks={tasks} onUpdateStatus={this.onUpdateStatus} onDelete={this.onDelete} onUpdate={this.onUpdate} />
           </div>
         </div>
       </div >

@@ -5,6 +5,10 @@ import TaskItem from "./TaskItem";
 export default class TaskList extends Component {
 
     render() {
+        const { tasks } = this.props;
+        const elmTasks = tasks.map((task, index) => {
+            return <TaskItem key={task.id} index={index} task={task} onUpdateStatus={this.props.onUpdateStatus} onDelete={this.props.onDelete} onUpdate={this.props.onUpdate} />
+        });
         return (
             <div className="row mt-15">
                 <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -33,10 +37,8 @@ export default class TaskList extends Component {
                                 <td></td>
                             </tr>
                             {/* Task Item  */}
-                            <TaskItem />
-                            <TaskItem />
-                            <TaskItem />
-                            <TaskItem />
+                            {/* <TaskItem /> */}
+                            {elmTasks}
                         </tbody>
                     </table>
                 </div>
